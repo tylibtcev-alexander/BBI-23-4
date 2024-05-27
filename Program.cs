@@ -1,10 +1,15 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 
 abstract class Problem
 {
     public abstract void Execute(string data);
+
+    public override string ToString()
+    {
+        return this.GetType().Name;
+    }
 }
 
 class Problem1 : Problem
@@ -26,6 +31,11 @@ class Problem1 : Problem
             char character = (char)('а' + i);
             Console.WriteLine($"{character}: {proportion:P2}");
         }
+    }
+
+    public override string ToString()
+    {
+        return "Задача 1: Частота строчных букв в тексте.";
     }
 }
 
@@ -51,6 +61,11 @@ class Problem3 : Problem
             Console.WriteLine(segment);
         }
     }
+
+    public override string ToString()
+    {
+        return "Задача 3: Разбиение текста на сегменты по 50 символов.";
+    }
 }
 
 class Problem5 : Problem
@@ -67,6 +82,11 @@ class Problem5 : Problem
             Console.WriteLine($"{group.Key}: {group.Count()}");
         }
     }
+
+    public override string ToString()
+    {
+        return "Задача 5: Частота первых букв слов.";
+    }
 }
 
 class Problem7 : Problem
@@ -81,6 +101,11 @@ class Problem7 : Problem
             Console.WriteLine(token);
         }
     }
+
+    public override string ToString()
+    {
+        return "Задача 7: Поиск слов, содержащих подстроку 'сла'.";
+    }
 }
 
 class Problem11 : Problem
@@ -90,20 +115,50 @@ class Problem11 : Problem
         char[] delimiters = new char[] { ',', ';', ' ', '\n' };
         string[] names = data.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
 
-        Array.Sort(names, (first, second) =>
+        for (int i = 0; i < names.Length - 1; i++)
         {
-            int comparisonResult = Char.ToLower(first.Trim()[0]) - Char.ToLower(second.Trim()[0]);
-            if (comparisonResult == 0)
+            for (int j = i + 1; j < names.Length; j++)
             {
-                comparisonResult = string.Compare(first.Trim(), second.Trim());
+                string first = names[i].Trim();
+                string second = names[j].Trim();
+
+                int comparisonResult = Char.ToLower(first[0]) - Char.ToLower(second[0]);
+                if (comparisonResult == 0)
+                {
+                    comparisonResult = CompareStrings(first, second);
+                }
+
+                if (comparisonResult > 0)
+                {
+                    string temp = names[i];
+                    names[i] = names[j];
+                    names[j] = temp;
+                }
             }
-            return comparisonResult;
-        });
+        }
 
         foreach (var name in names)
         {
             Console.WriteLine(name.Trim());
         }
+    }
+
+    private int CompareStrings(string first, string second)
+    {
+        int minLength = Math.Min(first.Length, second.Length);
+        for (int i = 0; i < minLength; i++)
+        {
+            if (first[i] != second[i])
+            {
+                return first[i] - second[i];
+            }
+        }
+        return first.Length - second.Length;
+    }
+
+    public override string ToString()
+    {
+        return "Задача 11: Сортировка имен.";
     }
 }
 
@@ -121,6 +176,11 @@ class Problem14 : Problem
             }
         }
         Console.WriteLine($"Сумма чисел: {totalSum}");
+    }
+
+    public override string ToString()
+    {
+        return "Задача 14: Сумма чисел в тексте.";
     }
 }
 
@@ -146,7 +206,7 @@ class MainProgram
         };
         for (int i = 0; i < problems.Length; i++)
         {
-            Console.WriteLine($"Задача {i + 1}:");
+            Console.WriteLine(problems[i].ToString());
             problems[i].Execute(files[i]);
             Console.WriteLine();
         }
